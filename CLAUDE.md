@@ -5,7 +5,7 @@
 - **Vue 3.4+** with Composition API (`<script setup>`)
 - **Vuetify 3.5+** - Material Design components
 - **TypeScript 5.4+** in strict mode
-- **Vite 5.2+** - Build tool with HMR
+- **Vite 7** - Build tool with HMR
 - **Material Design Icons** (@mdi/font)
 
 ## Development Commands
