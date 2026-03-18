@@ -49,6 +49,8 @@
                     size="large"
                     href="https://vuetifyjs.com/en/"
                     target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="View Vuetify documentation (opens in new tab)"
                     prepend-icon="mdi-book-open-variant"
                   >
                     View Docs
