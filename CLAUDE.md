@@ -34,6 +34,8 @@ src/
 ├── App.vue          # Root component
 ├── main.ts          # Entry point (Vuetify plugin setup)
 └── vite-env.d.ts    # Type declarations
+public/
+└── favicon.svg      # Static favicon (served directly by the web server)
 ```
 
 ## Key Patterns
@@ -58,14 +60,17 @@ const handleClick = () => count.value++
 - All Vuetify components are auto-imported (no manual imports needed)
 - Use `v-` prefix: `<v-btn>`, `<v-card>`, `<v-text-field>`, etc.
 - Material Design Icons: `<v-icon icon="mdi-home"></v-icon>`
+- **Do NOT** manually import `vuetify/components` or `vuetify/directives` in `main.ts` — this disables tree-shaking and significantly increases bundle size
 
 ### Theme Customization
 Edit `src/main.ts` to configure themes, colors, and defaults.
 
-### TypeScript
-- All `.vue` files support TypeScript in `<script setup lang="ts">`
-- Strict mode enabled in `tsconfig.json`
-- Type definitions for Vuetify are included
+### Security Patterns
+- Place static assets (favicon, images) in `public/` so they are served correctly
+- All external links must include `rel="noopener noreferrer"` and `target="_blank"` to prevent tab-napping and information leakage:
+  ```html
+  <a href="https://example.com" target="_blank" rel="noopener noreferrer">Link</a>
+  ```
 
 ## Adding Features
 
