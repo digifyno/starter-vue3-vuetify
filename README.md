@@ -19,6 +19,9 @@ npm install
 # Start dev server
 npm run dev
 
+# Type check
+npm run type-check
+
 # Build for production
 npm run build
 

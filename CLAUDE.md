@@ -2,9 +2,9 @@
 
 ## Stack
 
-- **Vue 3.4+** with Composition API (`<script setup>`)
-- **Vuetify 3.5+** - Material Design components
-- **TypeScript 5.4+** in strict mode
+- **Vue 3.5+** with Composition API (`<script setup>`)
+- **Vuetify 3.12+** - Material Design components
+- **TypeScript 5.9+** in strict mode
 - **Vite 7** - Build tool with HMR
 - **Material Design Icons** (@mdi/font)
 
@@ -18,7 +18,7 @@ npm install
 npm run dev
 
 # Type check without building
-vue-tsc --noEmit
+npm run type-check
 
 # Build for production
 npm run build
