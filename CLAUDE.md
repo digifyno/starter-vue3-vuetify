@@ -25,6 +25,12 @@ npm run build
 
 # Preview production build
 npm run preview
+
+# Run tests (single run)
+npm run test
+
+# Run tests in watch mode
+npm run test:watch
 ```
 
 ## Project Structure
