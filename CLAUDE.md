@@ -31,6 +31,12 @@ npm run test
 
 # Run tests in watch mode
 npm run test:watch
+
+# Lint source files
+npm run lint
+
+# Lint and auto-fix
+npm run lint:fix
 ```
 
 ## Project Structure
