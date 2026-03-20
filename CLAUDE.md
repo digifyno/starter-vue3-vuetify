@@ -77,6 +77,13 @@ Edit `src/main.ts` to configure themes, colors, and defaults.
   ```html
   <a href="https://example.com" target="_blank" rel="noopener noreferrer">Link</a>
   ```
+- A Content Security Policy (CSP) is enforced via a meta tag in `index.html`. The directives are required by Vuetify 3:
+  - `style-src 'self' 'unsafe-inline'` — Vuetify uses CSS-in-JS that injects inline `<style>` tags at runtime; without `unsafe-inline` all styles silently fail
+  - `font-src 'self' data:` — `@mdi/font` packages icons as base64 `data:` URIs; without `data:` icons are not rendered
+  - `img-src 'self' data:` — Vuetify may render SVG icons as `data:` URIs
+  - `script-src 'self'` — all JS is bundled by Vite; no CDN scripts needed
+  - `connect-src 'self'` — no external API calls from the starter template
+  - `default-src 'self'` — safe baseline for any unspecified resource types
 
 ## Adding Features
 
