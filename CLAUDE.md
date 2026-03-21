@@ -32,6 +32,9 @@ npm run test
 # Run tests in watch mode
 npm run test:watch
 
+# Run tests with coverage (thresholds: 80% statements/functions/lines, 70% branches)
+npm run test -- --coverage
+
 # Lint source files
 npm run lint
 
