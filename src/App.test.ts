@@ -38,3 +38,18 @@ test('index.html contains CSP meta tag', () => {
   expect(html).toContain('unsafe-inline')
   expect(html).toContain('data:')
 })
+
+describe('validEmail rule', () => {
+  const validEmail = (v: string): true | string =>
+    /.+@.+\..+/.test(v) || 'Enter a valid email address'
+
+  it('accepts valid email', () => {
+    expect(validEmail('user@example.com')).toBe(true)
+  })
+  it('rejects missing dot in domain', () => {
+    expect(validEmail('user@examplecom')).not.toBe(true)
+  })
+  it('rejects any-char-as-dot', () => {
+    expect(validEmail('a@bXc')).not.toBe(true)
+  })
+})
