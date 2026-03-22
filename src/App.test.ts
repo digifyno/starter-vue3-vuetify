@@ -39,6 +39,17 @@ test('index.html contains CSP meta tag', () => {
   expect(html).toContain('data:')
 })
 
+describe('required rule', () => {
+  const required = (v: string): true | string => !!v || 'This field is required'
+
+  it('passes for non-empty string', () => {
+    expect(required('hello')).toBe(true)
+  })
+  it('fails for empty string', () => {
+    expect(required('')).toBe('This field is required')
+  })
+})
+
 describe('validEmail rule', () => {
   const validEmail = (v: string): true | string =>
     /.+@.+\..+/.test(v) || 'Enter a valid email address'
@@ -52,4 +63,19 @@ describe('validEmail rule', () => {
   it('rejects any-char-as-dot', () => {
     expect(validEmail('a@bXc')).not.toBe(true)
   })
+})
+
+test('renders Component Examples section', () => {
+  const wrapper = mountApp()
+  expect(wrapper.text()).toContain('Component Examples')
+})
+
+test('renders snackbar element', () => {
+  const wrapper = mountApp()
+  expect(wrapper.find('.v-snackbar').exists()).toBe(true)
+})
+
+test('renders contact form', () => {
+  const wrapper = mountApp()
+  expect(wrapper.find('form').exists()).toBe(true)
 })
