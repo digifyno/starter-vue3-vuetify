@@ -72,10 +72,10 @@ test('renders Component Examples section', () => {
 
 test('renders snackbar element', () => {
   const wrapper = mountApp()
-  expect(wrapper.find('.v-snackbar').exists()).toBe(true)
+  expect(wrapper.findComponent({ name: 'VSnackbar' }).exists()).toBe(true)
 })
 
 test('renders contact form', () => {
   const wrapper = mountApp()
-  expect(wrapper.find('form').exists()).toBe(true)
+  expect(wrapper.findComponent({ name: 'VForm' }).exists()).toBe(true)
 })
