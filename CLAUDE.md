@@ -6,6 +6,7 @@
 - **Vuetify 3.12+** - Material Design components
 - **TypeScript 5.9+** in strict mode
 - **Vite 7** - Build tool with HMR
+- **Vitest 4+** - Test runner (with `@vitest/coverage-v8`)
 - **Material Design Icons** (@mdi/font)
 
 ## Development Commands
@@ -83,6 +84,11 @@ const handleClick = () => count.value++
 
 ### Theme Customization
 Edit `src/main.ts` to configure themes, colors, and defaults.
+
+### Testing Patterns
+
+- Test files (`*.test.ts`, `src/test-setup.ts`) are excluded from `vue-tsc` type checking in `tsconfig.json`. This is intentional: Vitest 4 no longer transitively provides `@types/node`, so Node built-ins in test helpers would fail production type checking. Use `npm run test` to catch test-specific type errors.
+- Components inside inactive `v-tabs` panels are lazily rendered. `findComponent()` may return nothing for components in non-active tabs — query the DOM element of the tab panel itself instead (e.g., `wrapper.find('[role="tabpanel"]')`).
 
 ### Security Patterns
 - Place static assets (favicon, images) in `public/` so they are served correctly
