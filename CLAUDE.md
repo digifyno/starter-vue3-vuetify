@@ -45,12 +45,16 @@ npm run lint:fix
 ## Project Structure
 
 ```
+eslint.config.js     # ESLint flat config (required for ESLint v9+)
 src/
 ├── App.vue          # Root component
+├── App.test.ts      # Vitest tests for App component
 ├── main.ts          # Entry point (Vuetify plugin setup)
-└── vite-env.d.ts    # Type declarations
+├── test-setup.ts    # Vitest global setup (ResizeObserver polyfill)
+└── vite-env.d.ts    # TypeScript declarations
 public/
-└── favicon.svg      # Static favicon (served directly by the web server)
+├── favicon.svg      # Static favicon (served directly by the web server)
+└── robots.txt       # Search engine crawl rules
 ```
 
 ## Key Patterns

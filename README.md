@@ -32,10 +32,16 @@ npm run preview
 ## Project Structure
 
 ```
+├── eslint.config.js     # ESLint flat config (required for ESLint v9+)
 ├── src/
 │   ├── App.vue          # Root component
+│   ├── App.test.ts      # Vitest tests for App component
 │   ├── main.ts          # App entry point with Vuetify setup
+│   ├── test-setup.ts    # Vitest global setup (ResizeObserver polyfill)
 │   └── vite-env.d.ts    # TypeScript declarations
+├── public/
+│   ├── favicon.svg      # Static favicon (served directly by the web server)
+│   └── robots.txt       # Search engine crawl rules
 ├── index.html           # HTML entry point
 ├── vite.config.ts       # Vite configuration
 ├── tsconfig.json        # TypeScript config
