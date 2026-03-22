@@ -88,6 +88,7 @@ Edit `src/main.ts` to configure themes, colors, and defaults.
 ### Testing Patterns
 
 - Test files (`*.test.ts`, `src/test-setup.ts`) are excluded from `vue-tsc` type checking in `tsconfig.json`. This is intentional: Vitest 4 no longer transitively provides `@types/node`, so Node built-ins in test helpers would fail production type checking. Use `npm run test` to catch test-specific type errors.
+- Vitest globals (`test`, `describe`, `expect`, `it`, `beforeEach`, etc.) are available in all test files without explicit imports — configured via `globals: true` in `vite.config.ts` and `"types": ["vitest/globals"]` in `tsconfig.json`.
 - Components inside inactive `v-tabs` panels are lazily rendered. `findComponent()` may return nothing for components in non-active tabs — query the DOM element of the tab panel itself instead (e.g., `wrapper.find('[role="tabpanel"]')`).
 
 ### Security Patterns
