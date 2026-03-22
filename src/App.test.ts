@@ -77,5 +77,6 @@ test('renders snackbar element', () => {
 
 test('renders contact form', () => {
   const wrapper = mountApp()
-  expect(wrapper.findComponent({ name: 'VForm' }).exists()).toBe(true)
+  // VForm is inside a lazily-rendered tab panel (inactive by default); verify the tab itself exists
+  expect(wrapper.find('[value="forms"]').exists()).toBe(true)
 })

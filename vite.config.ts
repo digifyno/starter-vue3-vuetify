@@ -17,7 +17,11 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['src/test-setup.ts'],
-    server: { deps: { inline: ['vuetify'] } },
+    server: {
+      deps: {
+        inline: ['vuetify']
+      }
+    },
     coverage: {
       provider: 'v8',
       thresholds: {
