@@ -43,9 +43,14 @@ npm run lint
 npm run lint:fix
 ```
 
+The Node.js version is pinned via `.nvmrc` (matches the `engines` field in `package.json`).
+
 ## Project Structure
 
 ```
+.github/
+└── dependabot.yml   # Automated dependency update configuration
+.nvmrc               # Node.js version pin (matches engines field in package.json)
 eslint.config.js     # ESLint flat config (required for ESLint v9+)
 src/
 ├── App.vue          # Root component
@@ -55,7 +60,8 @@ src/
 └── vite-env.d.ts    # TypeScript declarations
 public/
 ├── favicon.svg      # Static favicon (served directly by the web server)
-└── robots.txt       # Search engine crawl rules
+├── robots.txt       # Search engine crawl rules
+└── sitemap.xml      # XML sitemap for search engine indexing
 ```
 
 ## Key Patterns
