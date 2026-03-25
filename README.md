@@ -1,85 +1,82 @@
-# Vue 3 + Vuetify Starter Template
+# Vue 3 + Vuetify Starter
 
-A modern, production-ready starter template with Vue 3, Vuetify 3, TypeScript, and Vite.
+A production-ready starter template built with Vue 3, Vuetify 3, TypeScript, and Vite.
 
-## Features
+## Tech Stack
 
-- **Vue 3** - Composition API with `<script setup>`
-- **Vuetify 3** - Material Design component framework
-- **TypeScript** - Full type safety
-- **Vite** - Lightning-fast HMR and builds
-- **Material Design Icons** - Complete icon set
+- **Vue 3.5+** — Composition API with `<script setup>`
+- **Vuetify 3.12+** — Material Design component library
+- **TypeScript 5.9+** — Strict mode enabled
+- **Vite 7** — Build tool with HMR
+- **Vitest 4+** — Unit testing with coverage
+- **@mdi/font** — Material Design Icons
 
 ## Quick Start
 
 ```bash
-# Install dependencies
 npm install
-
-# Start dev server
-npm run dev
-
-# Type check
-npm run type-check
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
+npm run dev   # http://localhost:5173
 ```
+
+## Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start dev server at http://localhost:5173 |
+| `npm run build` | Production build (output: `dist/`) |
+| `npm run preview` | Preview production build |
+| `npm run type-check` | TypeScript validation |
+| `npm run lint` | Lint source files |
+| `npm run lint:fix` | Lint and auto-fix |
+| `npm run test` | Run tests |
+| `npm run test -- --coverage` | Tests with coverage (80% thresholds) |
 
 ## Project Structure
 
 ```
-├── eslint.config.js     # ESLint flat config (required for ESLint v9+)
-├── src/
-│   ├── App.vue          # Root component
-│   ├── App.test.ts      # Vitest tests for App component
-│   ├── main.ts          # App entry point with Vuetify setup
-│   ├── test-setup.ts    # Vitest global setup (ResizeObserver polyfill)
-│   └── vite-env.d.ts    # TypeScript declarations
-├── public/
-│   ├── favicon.svg      # Static favicon (served directly by the web server)
-│   └── robots.txt       # Search engine crawl rules
-├── index.html           # HTML entry point
-├── vite.config.ts       # Vite configuration
-├── tsconfig.json        # TypeScript config
-└── package.json
+src/
+├── App.vue          # Root component
+├── App.test.ts      # Tests for App component
+├── main.ts          # Entry point — Vuetify plugin setup
+├── test-setup.ts    # Vitest global setup
+└── vite-env.d.ts    # TypeScript declarations
+public/
+├── favicon.svg
+├── robots.txt
+└── sitemap.xml
+.github/
+└── dependabot.yml   # Automated dependency updates
 ```
 
 ## Customization
 
 ### Theme
-Edit `src/main.ts` to customize the Vuetify theme:
 
-```typescript
-const vuetify = createVuetify({
-  theme: {
-    defaultTheme: 'dark', // or 'light'
-    themes: {
-      light: {
-        colors: {
-          primary: '#1976D2',
-          secondary: '#424242',
-          // ... more colors
-        }
-      }
-    }
-  }
-})
+Edit `src/main.ts` to configure colors, fonts, and component defaults using the Vuetify theme API.
+
+### Routing
+
+```bash
+npm install vue-router@4
 ```
 
-### Icons
-This template uses Material Design Icons (@mdi/font). Browse available icons at [materialdesignicons.com](https://materialdesignicons.com/).
+### State Management
 
-## Learn More
+```bash
+npm install pinia
+```
 
-- [Vue 3 Documentation](https://vuejs.org/)
-- [Vuetify 3 Documentation](https://vuetifyjs.com/)
-- [Vite Documentation](https://vitejs.dev/)
-- [TypeScript Documentation](https://www.typescriptlang.org/)
+## Deployment
 
-## License
+Build the project and serve the `dist/` directory with any static file server:
 
-MIT
+```bash
+npm run build
+# Serve dist/ with nginx, Vercel, Netlify, etc.
+```
+
+## Resources
+
+- [Vuetify Component API](https://vuetifyjs.com/en/components/all/)
+- [Material Design Icons](https://materialdesignicons.com/)
+- [Vue 3 Composition API](https://vuejs.org/guide/extras/composition-api-faq.html)
