@@ -68,12 +68,79 @@ npm install pinia
 
 ## Deployment
 
-Build the project and serve the `dist/` directory with any static file server:
+### Build
 
 ```bash
+npm install
 npm run build
-# Serve dist/ with nginx, Vercel, Netlify, etc.
+# Output: dist/
 ```
+
+The `dist/` directory contains all static assets ready to serve.
+
+### nginx
+
+This is a single-page application — configure nginx to serve `index.html` for all routes:
+
+```nginx
+server {
+    listen 80;
+    root /var/www/your-app/dist;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+```
+
+### Vercel
+
+```bash
+npm install -g vercel
+vercel --prod
+```
+
+Vercel auto-detects Vite and sets the output directory to `dist/`.
+
+### Netlify
+
+Drag and drop the `dist/` folder at [app.netlify.com](https://app.netlify.com), or use the CLI:
+
+```bash
+npm install -g netlify-cli
+netlify deploy --prod --dir dist
+```
+
+### GitHub Pages
+
+Set `base` in `vite.config.ts` to match your repository name before building:
+
+```ts
+export default defineConfig({
+  base: '/your-repo-name/',
+  // ...
+})
+```
+
+Then push `dist/` to the `gh-pages` branch or use the [vite-plugin-gh-pages](https://github.com/cafreeman/vite-plugin-github-pages) package.
+
+### Environment Variables
+
+Prefix variables with `VITE_` to expose them to the client bundle:
+
+```bash
+# .env
+VITE_API_URL=https://api.example.com
+```
+
+Access in code:
+
+```ts
+const apiUrl = import.meta.env.VITE_API_URL
+```
+
+Variables are baked into the bundle at build time — rebuild after changing `.env` files.
 
 ## Resources
 
