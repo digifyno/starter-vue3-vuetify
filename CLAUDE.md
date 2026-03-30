@@ -98,11 +98,10 @@ Edit `src/main.ts` to configure themes, colors, and defaults.
 
 - Test files (`*.test.ts`, `src/test-setup.ts`) are excluded from `vue-tsc` type checking in `tsconfig.json`. This is intentional: Vitest 4 no longer transitively provides `@types/node`, so Node built-ins in test helpers would fail production type checking. Use `npm run test` to catch test-specific type errors.
 - Vitest globals (`test`, `describe`, `expect`, `it`, `beforeEach`, etc.) are available in all test files without explicit imports — configured via `globals: true` in `vite.config.ts` and `"types": ["vitest/globals"]` in `tsconfig.json`.
-- Components inside inactive `v-tabs` panels are lazily rendered. `findComponent()` may return nothing for non-active tabs. Instead, click the tab button to activate the panel, then access component state via `wrapper.vm`:
+- Components inside inactive `v-tabs` panels are lazily rendered. `findComponent()` may return nothing for non-active tabs. Instead, assert that the tab element itself exists rather than querying into the inactive panel:
   ```ts
-  await wrapper.find('[value="alerts"]').trigger('click')
-  const vm = wrapper.vm as any
-  expect(vm.someState).toBe(true)
+  // Verify the tab is present without activating it
+  expect(wrapper.find('[value="forms"]').exists()).toBe(true)
   ```
 
 ### Security Patterns
