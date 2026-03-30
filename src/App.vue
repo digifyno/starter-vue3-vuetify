@@ -487,9 +487,9 @@ const topics: string[] = [
   'Other',
 ]
 
-const required   = (v: string): true | string => !!v || 'This field is required'
+const required   = (v: string): true | string => !!v?.trim() || 'This field is required'
 const validEmail = (v: string): true | string =>
-  /.+@.+\..+/.test(v) || 'Enter a valid email address'
+  /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v) || 'Enter a valid email address'
 
 function submitForm(): void {
   showSnackbar('success', `Thanks, ${form.firstName}! Your message has been sent.`)
