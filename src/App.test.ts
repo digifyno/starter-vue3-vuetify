@@ -160,6 +160,21 @@ test('snackbar dismiss button closes snackbar', async () => {
   }
 })
 
+test('share icon button has aria-label', () => {
+  const wrapper = mountApp()
+  // Cards tab is active by default — share buttons are rendered
+  const shareBtns = wrapper.findAll('[aria-label="Share"]')
+  expect(shareBtns.length).toBeGreaterThan(0)
+})
+
+test('v-progress-circular has aria-label', async () => {
+  const wrapper = mountApp()
+  await wrapper.find('[value="alerts"]').trigger('click')
+  await wrapper.vm.$nextTick()
+  const spinner = wrapper.find('[aria-label="Loading"]')
+  expect(spinner.exists()).toBe(true)
+})
+
 test('submitForm shows snackbar and resetForm clears fields', async () => {
   const wrapper = mountApp()
 

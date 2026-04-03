@@ -176,6 +176,7 @@
                     <v-btn
                       icon="mdi-share-variant"
                       variant="text"
+                      aria-label="Share"
                     />
                   </v-card-actions>
                 </v-card>
@@ -266,6 +267,7 @@
                 <v-progress-circular
                   indeterminate
                   color="secondary"
+                  aria-label="Loading"
                 />
               </v-col>
             </v-row>
