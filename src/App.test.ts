@@ -94,14 +94,41 @@ describe('progress buttons', () => {
     expect(wrapper.find('[value="alerts"]').exists()).toBe(true)
   })
 
-  it('increments progress by 10', async () => {
+  it('increments and decrements progress, clamped at 0 and 100', async () => {
     const wrapper = mountApp()
-    // Navigate to alerts tab where progress controls live
     await wrapper.find('[value="alerts"]').trigger('click')
     await wrapper.vm.$nextTick()
-    const plusBtn = wrapper.findAll('button').find(b => b.text().includes('+10%'))
-    // Verify button exists (tab may be lazily rendered; assert tab exists if button not found)
-    expect(plusBtn !== undefined || wrapper.find('[value="alerts"]').exists()).toBe(true)
+
+    const allButtons = wrapper.findAll('button')
+    const minusBtn = allButtons.find(b => b.text().includes('-10%'))
+    const plusBtn  = allButtons.find(b => b.text().includes('+10%'))
+    expect(minusBtn).toBeDefined()
+    expect(plusBtn).toBeDefined()
+
+    // Access internal setup state (script setup does not expose via defineExpose)
+    const state = (wrapper.vm as any).$.setupState
+
+    // Initial progress is 60; +10% → 70
+    await plusBtn!.trigger('click')
+    await wrapper.vm.$nextTick()
+    expect(state.progress).toBe(70)
+
+    // -10% → 60
+    await minusBtn!.trigger('click')
+    await wrapper.vm.$nextTick()
+    expect(state.progress).toBe(60)
+
+    // Upper clamp: set to 100, +10% stays at 100
+    state.progress = 100
+    await plusBtn!.trigger('click')
+    await wrapper.vm.$nextTick()
+    expect(state.progress).toBe(100)
+
+    // Lower clamp: set to 0, -10% stays at 0
+    state.progress = 0
+    await minusBtn!.trigger('click')
+    await wrapper.vm.$nextTick()
+    expect(state.progress).toBe(0)
   })
 })
 
@@ -109,15 +136,44 @@ test('snackbar dismiss button closes snackbar', async () => {
   const wrapper = mountApp()
   const snackbar = wrapper.findComponent({ name: 'VSnackbar' })
   expect(snackbar.exists()).toBe(true)
-  // Verify initial state — snackbar starts hidden
+
+  // Access internal setup state
+  const state = (wrapper.vm as any).$.setupState
+
+  // Show the snackbar via the component function
+  state.showSnackbar('info', 'Test message')
+  await wrapper.vm.$nextTick()
+  expect(snackbar.props('modelValue')).toBe(true)
+
+  // Dismiss — exercises the snackbarVisible = false code path
+  state.snackbarVisible = false
+  await wrapper.vm.$nextTick()
   expect(snackbar.props('modelValue')).toBe(false)
 })
 
 test('submitForm shows snackbar and resetForm clears fields', async () => {
   const wrapper = mountApp()
-  // Form is in a lazily-rendered tab; verify the tab itself exists
-  expect(wrapper.find('[value="forms"]').exists()).toBe(true)
-  // Snackbar starts hidden
+
+  // Access internal setup state (script setup does not expose via defineExpose)
+  const state = (wrapper.vm as any).$.setupState
+
+  // Populate form fields directly on the reactive form object
+  state.form.firstName = 'Jane'
+  state.form.lastName  = 'Doe'
+  state.form.email     = 'jane@example.com'
+  state.form.topic     = 'General Inquiry'
+  state.form.message   = 'Hello!'
+
+  // Call submitForm — should show snackbar and clear all fields
+  state.submitForm()
+  await wrapper.vm.$nextTick()
+
   const snackbar = wrapper.findComponent({ name: 'VSnackbar' })
-  expect(snackbar.props('modelValue')).toBe(false)
+  expect(snackbar.props('modelValue')).toBe(true)
+
+  expect(state.form.firstName).toBe('')
+  expect(state.form.lastName).toBe('')
+  expect(state.form.email).toBe('')
+  expect(state.form.topic).toBe('')
+  expect(state.form.message).toBe('')
 })
