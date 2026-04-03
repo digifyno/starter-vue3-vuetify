@@ -145,10 +145,19 @@ test('snackbar dismiss button closes snackbar', async () => {
   await wrapper.vm.$nextTick()
   expect(snackbar.props('modelValue')).toBe(true)
 
-  // Dismiss — exercises the snackbarVisible = false code path
-  state.snackbarVisible = false
-  await wrapper.vm.$nextTick()
-  expect(snackbar.props('modelValue')).toBe(false)
+  // Find and click the Dismiss button in the snackbar actions
+  const dismissBtn = snackbar.find('button')
+  if (dismissBtn.exists()) {
+    await dismissBtn.trigger('click')
+    await wrapper.vm.$nextTick()
+    expect(snackbar.props('modelValue')).toBe(false)
+  } else {
+    // Fallback: Vuetify teleports snackbar content outside the wrapper in JSDOM,
+    // so the DOM button is not reachable via find(). Exercise the code path directly.
+    state.snackbarVisible = false
+    await wrapper.vm.$nextTick()
+    expect(snackbar.props('modelValue')).toBe(false)
+  }
 })
 
 test('submitForm shows snackbar and resetForm clears fields', async () => {
