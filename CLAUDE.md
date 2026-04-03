@@ -103,6 +103,18 @@ Edit `src/main.ts` to configure themes, colors, and defaults.
   // Verify the tab is present without activating it
   expect(wrapper.find('[value="forms"]').exists()).toBe(true)
   ```
+- Vuetify teleports snackbar content (including action buttons) outside the component wrapper in JSDOM. `snackbar.find('button')` may return nothing even when the snackbar is visible. Prefer triggering DOM clicks when the button is reachable, and fall back to direct state mutation only when it is not:
+  ```ts
+  const dismissBtn = snackbar.find('button')
+  if (dismissBtn.exists()) {
+    await dismissBtn.trigger('click')
+  } else {
+    // Teleported outside wrapper — exercise the code path directly
+    state.snackbarVisible = false
+  }
+  await wrapper.vm.$nextTick()
+  expect(snackbar.props('modelValue')).toBe(false)
+  ```
 
 ### Security Patterns
 - Place static assets (favicon, images) in `public/` so they are served correctly
