@@ -175,6 +175,31 @@ test('v-progress-circular has aria-label', async () => {
   expect(spinner.exists()).toBe(true)
 })
 
+test('forms tab activates and renders form content', async () => {
+  const wrapper = mountApp()
+  await wrapper.find('[value="forms"]').trigger('click')
+  await wrapper.vm.$nextTick()
+  const buttons = wrapper.findAll('button')
+  const sendBtn  = buttons.find(b => b.text().includes('Send Message'))
+  const resetBtn = buttons.find(b => b.text().includes('Reset'))
+  expect(sendBtn).toBeDefined()
+  expect(resetBtn).toBeDefined()
+})
+
+test('required validator is exercised through the component', async () => {
+  const wrapper = mountApp()
+  const state = (wrapper.vm as any).$.setupState
+  expect(state.required('')).toBe('This field is required')
+  expect(state.required('hello')).toBe(true)
+})
+
+test('validEmail validator false branch covered via component', async () => {
+  const wrapper = mountApp()
+  const state = (wrapper.vm as any).$.setupState
+  expect(state.validEmail('notanemail')).toBe('Enter a valid email address')
+  expect(state.validEmail('user@example.com')).toBe(true)
+})
+
 test('submitForm shows snackbar and resetForm clears fields', async () => {
   const wrapper = mountApp()
 
