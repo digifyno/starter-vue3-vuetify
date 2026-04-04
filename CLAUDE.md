@@ -50,9 +50,7 @@ The Node.js version is pinned via `.nvmrc` (matches the `engines` field in `pack
 ```
 README.md            # User-facing documentation for developers using this starter template
 .github/
-├── dependabot.yml             # Automated dependency update configuration
-└── workflows/
-    └── ci.yml                 # GitHub Actions CI: install, lint, type-check, test, build (on push/PR to main)
+└── dependabot.yml             # Automated dependency update configuration
 .nvmrc               # Node.js version pin (matches engines field in package.json)
 eslint.config.js     # ESLint flat config (required for ESLint v9+)
 src/
