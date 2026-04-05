@@ -176,7 +176,7 @@
                     <v-btn
                       icon="mdi-share-variant"
                       variant="text"
-                      aria-label="Share"
+                      :aria-label="`Share ${card.title}`"
                     />
                   </v-card-actions>
                 </v-card>

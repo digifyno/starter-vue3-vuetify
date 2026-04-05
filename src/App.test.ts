@@ -158,11 +158,13 @@ test('snackbar dismiss button closes snackbar', async () => {
   }
 })
 
-test('share icon button has aria-label', () => {
+test('share icon buttons have card-specific aria-labels', () => {
   const wrapper = mountApp()
-  // Cards tab is active by default — share buttons are rendered
-  const shareBtns = wrapper.findAll('[aria-label="Share"]')
-  expect(shareBtns.length).toBeGreaterThan(0)
+  const shareBtn = wrapper.find('[aria-label="Share Vue 3 Composition API"]')
+  expect(shareBtn.exists()).toBe(true)
+  // All three cards should have distinct share buttons
+  const allShareBtns = wrapper.findAll('[aria-label^="Share "]')
+  expect(allShareBtns.length).toBe(3)
 })
 
 test('v-progress-circular has aria-label', async () => {
