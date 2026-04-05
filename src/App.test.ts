@@ -105,8 +105,7 @@ describe('progress buttons', () => {
     expect(minusBtn).toBeDefined()
     expect(plusBtn).toBeDefined()
 
-    // Access internal setup state (script setup does not expose via defineExpose)
-    const state = (wrapper.vm as any).$.setupState
+    const state = wrapper.vm as any
 
     // Initial progress is 60; +10% → 70
     await plusBtn!.trigger('click')
@@ -137,8 +136,7 @@ test('snackbar dismiss button closes snackbar', async () => {
   const snackbar = wrapper.findComponent({ name: 'VSnackbar' })
   expect(snackbar.exists()).toBe(true)
 
-  // Access internal setup state
-  const state = (wrapper.vm as any).$.setupState
+  const state = wrapper.vm as any
 
   // Show the snackbar via the component function
   state.showSnackbar('info', 'Test message')
@@ -188,14 +186,14 @@ test('forms tab activates and renders form content', async () => {
 
 test('required validator is exercised through the component', async () => {
   const wrapper = mountApp()
-  const state = (wrapper.vm as any).$.setupState
+  const state = wrapper.vm as any
   expect(state.required('')).toBe('This field is required')
   expect(state.required('hello')).toBe(true)
 })
 
 test('validEmail validator false branch covered via component', async () => {
   const wrapper = mountApp()
-  const state = (wrapper.vm as any).$.setupState
+  const state = wrapper.vm as any
   expect(state.validEmail('notanemail')).toBe('Enter a valid email address')
   expect(state.validEmail('user@example.com')).toBe(true)
 })
@@ -203,8 +201,7 @@ test('validEmail validator false branch covered via component', async () => {
 test('submitForm shows snackbar and resetForm clears fields', async () => {
   const wrapper = mountApp()
 
-  // Access internal setup state (script setup does not expose via defineExpose)
-  const state = (wrapper.vm as any).$.setupState
+  const state = wrapper.vm as any
 
   // Populate form fields directly on the reactive form object
   state.form.firstName = 'Jane'

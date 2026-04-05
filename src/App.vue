@@ -502,6 +502,21 @@ function resetForm(): void {
   formRef.value?.reset()
   Object.assign(form, { firstName: '', lastName: '', email: '', topic: '', message: '' })
 }
+
+defineExpose({
+  activeTab,
+  progress,
+  snackbarVisible,
+  snackbarColor,
+  snackbarText,
+  form,
+  formValid,
+  showSnackbar,
+  submitForm,
+  resetForm,
+  required,
+  validEmail,
+})
 </script>
 
 <style scoped>
