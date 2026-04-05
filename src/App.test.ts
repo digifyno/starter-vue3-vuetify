@@ -186,6 +186,46 @@ test('forms tab activates and renders form content', async () => {
   expect(resetBtn).toBeDefined()
 })
 
+test('form fields accept typed input via DOM events', async () => {
+  const wrapper = mountApp()
+  // Activate the Forms tab to force-render the lazy panel
+  await wrapper.find('[value="forms"]').trigger('click')
+  await wrapper.vm.$nextTick()
+
+  const state = wrapper.vm as any
+
+  // Trigger the compiled v-model update handlers (App.vue:321, 331, 341) by emitting
+  // update:modelValue on each Vuetify form component. Direct state mutation bypasses
+  // these handlers; only component-emitted events invoke the compiled setters.
+
+  // VTextField for email (App.vue:321) — third VTextField in the form (0-indexed)
+  const textFields = wrapper.findAllComponents({ name: 'VTextField' })
+  const emailField = textFields[2]
+  if (emailField) {
+    await emailField.vm.$emit('update:modelValue', 'alice@example.com')
+    await wrapper.vm.$nextTick()
+    expect(state.form.email).toBe('alice@example.com')
+  }
+
+  // VSelect for topic (App.vue:331)
+  const selectFields = wrapper.findAllComponents({ name: 'VSelect' })
+  const topicField = selectFields[0]
+  if (topicField) {
+    await topicField.vm.$emit('update:modelValue', 'General Inquiry')
+    await wrapper.vm.$nextTick()
+    expect(state.form.topic).toBe('General Inquiry')
+  }
+
+  // VTextarea for message (App.vue:341)
+  const textareas = wrapper.findAllComponents({ name: 'VTextarea' })
+  const messageField = textareas[0]
+  if (messageField) {
+    await messageField.vm.$emit('update:modelValue', 'Hello world')
+    await wrapper.vm.$nextTick()
+    expect(state.form.message).toBe('Hello world')
+  }
+})
+
 test('required validator is exercised through the component', async () => {
   const wrapper = mountApp()
   const state = wrapper.vm as any
