@@ -96,6 +96,17 @@ Edit `src/main.ts` to configure themes, colors, and defaults.
 
 - Test files (`*.test.ts`, `src/test-setup.ts`) are excluded from `vue-tsc` type checking in `tsconfig.json`. This is intentional: Vitest 4 no longer transitively provides `@types/node`, so Node built-ins in test helpers would fail production type checking. Use `npm run test` to catch test-specific type errors.
 - Vitest globals (`test`, `describe`, `expect`, `it`, `beforeEach`, etc.) are available in all test files without explicit imports — configured via `globals: true` in `vite.config.ts` and `"types": ["vitest/globals"]` in `tsconfig.json`.
+- To access component state in tests, use `defineExpose()` in `<script setup>` to explicitly expose the refs, reactive objects, and functions you need. Then read them via `wrapper.vm as any` in tests. Do **not** use `(wrapper.vm as any).$.setupState` — that is a private Vue internal and will break across Vue versions:
+  ```ts
+  // App.vue
+  defineExpose({ count, reset })
+
+  // App.test.ts
+  const state = wrapper.vm as any
+  expect(state.count).toBe(0)
+  state.count = 5          // mutate reactive state directly
+  state.reset()            // call exposed functions
+  ```
 - Components inside inactive `v-tabs` panels are lazily rendered. `findComponent()` may return nothing for non-active tabs. Instead, assert that the tab element itself exists rather than querying into the inactive panel:
   ```ts
   // Verify the tab is present without activating it
