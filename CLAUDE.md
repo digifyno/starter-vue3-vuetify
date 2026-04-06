@@ -113,17 +113,29 @@ Edit `src/main.ts` to configure themes, colors, and defaults.
   // Verify the tab is present without activating it
   expect(wrapper.find('[value="forms"]').exists()).toBe(true)
   ```
-- Vuetify teleports snackbar content (including action buttons) outside the component wrapper in JSDOM. `snackbar.find('button')` may return nothing even when the snackbar is visible. Prefer triggering DOM clicks when the button is reachable, and fall back to direct state mutation only when it is not:
+- Vuetify teleports snackbar content (including action buttons) outside the component wrapper in JSDOM. Use a three-tier fallback to locate and click the dismiss button:
   ```ts
-  const dismissBtn = snackbar.find('button')
-  if (dismissBtn.exists()) {
+  // 1. Try DOM buttons filtered by visible text
+  const allBtns = wrapper.findAll('button')
+  const dismissBtn = allBtns.find(b => b.text().includes('Dismiss'))
+  if (dismissBtn) {
     await dismissBtn.trigger('click')
+    await wrapper.vm.$nextTick()
+    expect(state.snackbarVisible).toBe(false)
   } else {
-    // Teleported outside wrapper — exercise the code path directly
-    state.snackbarVisible = false
+    // 2. Teleported outside wrapper — find VBtn in snackbar component subtree
+    const dismissVBtn = snackbar.findComponent({ name: 'VBtn' })
+    if (dismissVBtn.exists()) {
+      await dismissVBtn.trigger('click')
+      await wrapper.vm.$nextTick()
+      expect(state.snackbarVisible).toBe(false)
+    } else {
+      // 3. Last resort: exercise the code path directly via state mutation
+      state.snackbarVisible = false
+      await wrapper.vm.$nextTick()
+      expect(snackbar.props('modelValue')).toBe(false)
+    }
   }
-  await wrapper.vm.$nextTick()
-  expect(snackbar.props('modelValue')).toBe(false)
   ```
 
 ### Security Patterns
