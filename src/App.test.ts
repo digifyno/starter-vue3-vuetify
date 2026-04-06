@@ -198,8 +198,25 @@ test('form fields accept typed input via DOM events', async () => {
   // update:modelValue on each Vuetify form component. Direct state mutation bypasses
   // these handlers; only component-emitted events invoke the compiled setters.
 
-  // VTextField for email (App.vue:321) — third VTextField in the form (0-indexed)
   const textFields = wrapper.findAllComponents({ name: 'VTextField' })
+
+  // VTextField for firstName (App.vue:299-305) — first VTextField in the form
+  const firstNameField = textFields[0]
+  if (firstNameField) {
+    await firstNameField.vm.$emit('update:modelValue', 'Alice')
+    await wrapper.vm.$nextTick()
+    expect(state.form.firstName).toBe('Alice')
+  }
+
+  // VTextField for lastName (App.vue:309-317) — second VTextField in the form
+  const lastNameField = textFields[1]
+  if (lastNameField) {
+    await lastNameField.vm.$emit('update:modelValue', 'Smith')
+    await wrapper.vm.$nextTick()
+    expect(state.form.lastName).toBe('Smith')
+  }
+
+  // VTextField for email (App.vue:321) — third VTextField in the form (0-indexed)
   const emailField = textFields[2]
   if (emailField) {
     await emailField.vm.$emit('update:modelValue', 'alice@example.com')
