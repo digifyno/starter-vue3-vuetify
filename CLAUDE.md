@@ -52,6 +52,7 @@ README.md            # User-facing documentation for developers using this start
 .github/
 └── dependabot.yml             # Automated dependency update configuration
 .nvmrc               # Node.js version pin (matches engines field in package.json)
+.npmrc               # Forces devDependency install under NODE_ENV=production
 eslint.config.js     # ESLint flat config (required for ESLint v9+)
 src/
 ├── App.vue          # Root component
