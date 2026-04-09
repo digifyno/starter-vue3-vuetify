@@ -55,6 +55,10 @@ README.md            # User-facing documentation for developers using this start
 .nvmrc               # Node.js version pin (matches engines field in package.json)
 .npmrc               # Forces devDependency install under NODE_ENV=production
 eslint.config.js     # ESLint flat config (required for ESLint v9+)
+index.html           # App entry point; contains CSP meta tag
+vite.config.ts       # Vite build + Vitest test configuration
+tsconfig.json        # TypeScript compiler config (excludes test files)
+tsconfig.node.json   # TypeScript config for Vite/Node tooling
 src/
 ├── App.vue          # Root component
 ├── App.test.ts      # Vitest tests for App component
