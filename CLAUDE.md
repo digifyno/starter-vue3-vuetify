@@ -102,6 +102,7 @@ Edit `src/main.ts` to configure themes, colors, and defaults.
 
 - Test files (`*.test.ts`, `src/test-setup.ts`) are excluded from `vue-tsc` type checking in `tsconfig.json`. This is intentional: Vitest 4 no longer transitively provides `@types/node`, so Node built-ins in test helpers would fail production type checking. Use `npm run test` to catch test-specific type errors.
 - Vitest globals (`test`, `describe`, `expect`, `it`, `beforeEach`, etc.) are available in all test files without explicit imports — configured via `globals: true` in `vite.config.ts` and `"types": ["vitest/globals"]` in `tsconfig.json`.
+- `@typescript-eslint/no-explicit-any` is disabled for `*.test.ts` and `*.spec.ts` files in `eslint.config.js`. This is intentional: the `wrapper.vm as any` pattern is the documented way to access exposed component state in tests, and the override keeps the lint rule active for all production code.
 - To access component state in tests, use `defineExpose()` in `<script setup>` to explicitly expose the refs, reactive objects, and functions you need. Then read them via `wrapper.vm as any` in tests. Do **not** use `(wrapper.vm as any).$.setupState` — that is a private Vue internal and will break across Vue versions:
   ```ts
   // App.vue
