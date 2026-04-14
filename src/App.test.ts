@@ -185,6 +185,32 @@ test('snackbar trigger buttons fire showSnackbar', async () => {
   expect(state.snackbarColor).toBe('success')
 })
 
+test('all snackbar option buttons fire showSnackbar with correct color and message', async () => {
+  const wrapper = mountApp()
+  await wrapper.find('[value="alerts"]').trigger('click')
+  await wrapper.vm.$nextTick()
+
+  const expectedOptions = [
+    { label: 'Success', color: 'success', message: 'Operation completed successfully!' },
+    { label: 'Info',    color: 'info',    message: 'Here is some useful information.' },
+    { label: 'Warning', color: 'warning', message: 'Please review before continuing.' },
+    { label: 'Error',   color: 'error',   message: 'Something went wrong. Please try again.' },
+  ]
+
+  const state = wrapper.vm as any
+
+  for (const opt of expectedOptions) {
+    const allBtns = wrapper.findAll('button')
+    const btn = allBtns.find(b => b.text().includes(opt.label))
+    expect(btn).toBeDefined()
+    await btn!.trigger('click')
+    await wrapper.vm.$nextTick()
+    expect(state.snackbarVisible).toBe(true)
+    expect(state.snackbarColor).toBe(opt.color)
+    expect(state.snackbarText).toBe(opt.message)
+  }
+})
+
 test('share icon buttons have card-specific aria-labels', () => {
   const wrapper = mountApp()
   const shareBtn = wrapper.find('[aria-label="Share Vue 3 Composition API"]')
