@@ -302,6 +302,8 @@ test('submitForm shows snackbar and resetForm clears fields', async () => {
 
   const snackbar = wrapper.findComponent({ name: 'VSnackbar' })
   expect(snackbar.props('modelValue')).toBe(true)
+  expect(state.snackbarText).toBe('Thanks, Jane! Your message has been sent.')
+  expect(state.snackbarColor).toBe('success')
 
   expect(state.form.firstName).toBe('')
   expect(state.form.lastName).toBe('')
