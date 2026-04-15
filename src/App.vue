@@ -1,5 +1,18 @@
 <template>
   <v-app>
+    <v-app-bar
+      flat
+      border="bottom"
+    >
+      <v-app-bar-title>Vue 3 + Vuetify Starter</v-app-bar-title>
+      <template #append>
+        <v-btn
+          :icon="isDark ? 'mdi-weather-sunny' : 'mdi-weather-night'"
+          :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+          @click="toggleTheme"
+        />
+      </template>
+    </v-app-bar>
     <v-main>
       <!-- Existing hero card -->
       <v-container
@@ -395,7 +408,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
+import { useTheme } from 'vuetify'
+
+// --- Theme ---
+const theme = useTheme()
+const isDark = computed(() => theme.global.current.value.dark)
+function toggleTheme(): void {
+  theme.global.name.value = isDark.value ? 'light' : 'dark'
+}
 
 // --- Navigation ---
 const activeTab = ref<string>('cards')
@@ -504,6 +525,8 @@ function resetForm(): void {
 }
 
 defineExpose({
+  isDark,
+  toggleTheme,
   activeTab,
   progress,
   snackbarVisible,
