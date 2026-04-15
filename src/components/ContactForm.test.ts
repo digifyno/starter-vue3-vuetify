@@ -152,3 +152,34 @@ test('resetForm clears all fields', async () => {
   expect(state.form.firstName).toBe('')
   expect(state.form.email).toBe('')
 })
+
+test('submitForm does nothing when formValid is false', async () => {
+  const spy = vi.fn()
+  const wrapper = mount(ContactForm, {
+    global: { plugins: [vuetify] },
+    props: { onFormSubmitted: spy },
+  })
+  const state = wrapper.vm as any
+  // formValid starts as false (default)
+  await state.submitForm()
+  expect(spy).not.toHaveBeenCalled()
+  expect(state.isSubmitting).toBe(false)
+})
+
+test('submitForm falls back to static message when content array is empty', async () => {
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+    json: vi.fn().mockResolvedValue({ content: [] })
+  }))
+  const spy = vi.fn()
+  const wrapper = mount(ContactForm, {
+    global: { plugins: [vuetify] },
+    props: { onFormSubmitted: spy },
+  })
+  const state = wrapper.vm as any
+  state.form.firstName = 'Jane'
+  state.formValid      = true
+  await state.submitForm()
+  await wrapper.vm.$nextTick()
+  expect(spy).toHaveBeenCalledWith({ firstName: 'Jane', message: 'Thanks, Jane! Your message has been sent.' })
+  vi.unstubAllGlobals()
+})
