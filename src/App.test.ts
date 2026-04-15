@@ -368,6 +368,28 @@ test('v-progress-linear update:modelValue updates progress', async () => {
   }
 })
 
+test('renders v-app-bar', () => {
+  const wrapper = mountApp()
+  expect(wrapper.findComponent({ name: 'VAppBar' }).exists()).toBe(true)
+})
+
+test('theme toggle button has aria-label', () => {
+  const wrapper = mountApp()
+  const appBar = wrapper.findComponent({ name: 'VAppBar' })
+  const toggleBtn = appBar.find('[aria-label]')
+  const label = toggleBtn.attributes('aria-label') ?? ''
+  expect(label).toMatch(/Switch to (light|dark) mode/)
+})
+
+test('toggleTheme switches theme', async () => {
+  const wrapper = mountApp()
+  const state = wrapper.vm as any
+  const initialDark = state.isDark
+  state.toggleTheme()
+  await wrapper.vm.$nextTick()
+  expect(state.isDark).toBe(!initialDark)
+})
+
 test('v-snackbar update:modelValue updates snackbarVisible', async () => {
   const wrapper = mountApp()
   const state = wrapper.vm as any
