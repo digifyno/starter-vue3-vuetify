@@ -333,7 +333,7 @@ test('form-submitted event shows success snackbar', async () => {
 
   // Emit form-submitted directly on the child component — triggers App's onFormSubmitted
   // handler (verified: child vm.$emit propagates to parent v-on listeners)
-  await contactForm.vm.$emit('form-submitted', { firstName: 'Jane' })
+  await contactForm.vm.$emit('form-submitted', { firstName: 'Jane', message: 'Thanks, Jane! Your message has been sent.' })
   await wrapper.vm.$nextTick()
 
   const snackbar = wrapper.findComponent({ name: 'VSnackbar' })

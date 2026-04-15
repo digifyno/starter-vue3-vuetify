@@ -129,8 +129,8 @@ function onShowSnackbar({ color, message }: { color: string; message: string }):
   showSnackbar(color, message)
 }
 
-function onFormSubmitted({ firstName }: { firstName: string }): void {
-  showSnackbar('success', `Thanks, ${firstName}! Your message has been sent.`)
+function onFormSubmitted({ message }: { firstName: string; message: string }): void {
+  showSnackbar('success', message)
 }
 
 defineExpose({
