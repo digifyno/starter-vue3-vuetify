@@ -82,7 +82,8 @@
               <v-btn
                 type="submit"
                 color="primary"
-                :disabled="!formValid"
+                :disabled="!formValid || isSubmitting"
+                :loading="isSubmitting"
                 prepend-icon="mdi-send"
               >
                 Send Message
@@ -99,7 +100,7 @@
 import { ref, reactive } from 'vue'
 
 const emit = defineEmits<{
-  'form-submitted': [{ firstName: string }]
+  'form-submitted': [{ firstName: string; message: string }]
 }>()
 
 interface ContactFormData {
@@ -110,8 +111,9 @@ interface ContactFormData {
   message:   string
 }
 
-const formRef   = ref()
-const formValid = ref<boolean>(false)
+const formRef       = ref()
+const formValid     = ref<boolean>(false)
+const isSubmitting  = ref<boolean>(false)
 
 const form = reactive<ContactFormData>({
   firstName: '',
@@ -133,9 +135,35 @@ const required   = (v: string): true | string => !!v?.trim() || 'This field is r
 const validEmail = (v: string): true | string =>
   /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v) || 'Enter a valid email address'
 
-function submitForm(): void {
-  emit('form-submitted', { firstName: form.firstName })
-  resetForm()
+async function submitForm(): Promise<void> {
+  if (!formValid.value) return
+  isSubmitting.value = true
+  try {
+    const response = await fetch('https://api.rsi.digify.no/hub/ai/v1/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `WorkerHub ${import.meta.env.VITE_RSI_HUB_TOKEN}`
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 100,
+        messages: [{
+          role: 'user',
+          content: `Write a one-sentence acknowledgement for a contact form submission from ${form.firstName} ${form.lastName} about "${form.topic}".`
+        }]
+      })
+    })
+    const data = await response.json()
+    const ackMessage = data?.content?.[0]?.text ?? `Thanks, ${form.firstName}! Your message has been sent.`
+    emit('form-submitted', { firstName: form.firstName, message: ackMessage })
+    resetForm()
+  } catch {
+    emit('form-submitted', { firstName: form.firstName, message: `Thanks, ${form.firstName}! Your message has been sent.` })
+    resetForm()
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 function resetForm(): void {
@@ -143,5 +171,5 @@ function resetForm(): void {
   Object.assign(form, { firstName: '', lastName: '', email: '', topic: '', message: '' })
 }
 
-defineExpose({ form, formValid, formRef, submitForm, resetForm, required, validEmail })
+defineExpose({ form, formValid, formRef, isSubmitting, submitForm, resetForm, required, validEmail })
 </script>
