@@ -139,28 +139,8 @@ async function submitForm(): Promise<void> {
   if (!formValid.value) return
   isSubmitting.value = true
   try {
-    const response = await fetch('https://api.rsi.digify.no/hub/ai/v1/chat', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `WorkerHub ${import.meta.env.VITE_RSI_HUB_TOKEN}`
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 100,
-        messages: [{
-          role: 'user',
-          content: `Write a one-sentence acknowledgement for a contact form submission from ${form.firstName} ${form.lastName} about "${form.topic}".`
-        }]
-      })
-    })
-    if (!response.ok) throw new Error(`HTTP ${response.status}`)
-    const data = await response.json()
-    const ackMessage = data?.content?.[0]?.text ?? `Thanks, ${form.firstName}! Your message has been sent.`
+    const ackMessage = `Thanks, ${form.firstName}! Your message has been sent.`
     emit('form-submitted', { firstName: form.firstName, message: ackMessage })
-    resetForm()
-  } catch {
-    emit('form-submitted', { firstName: form.firstName, message: `Thanks, ${form.firstName}! Your message has been sent.` })
     resetForm()
   } finally {
     isSubmitting.value = false

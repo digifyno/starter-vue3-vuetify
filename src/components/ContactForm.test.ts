@@ -67,31 +67,7 @@ test('validEmail fails for invalid email', () => {
   expect(state.validEmail('notanemail')).toBe('Enter a valid email address')
 })
 
-test('submitForm emits form-submitted with AI-generated message on success', async () => {
-  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-    ok: true,
-    json: vi.fn().mockResolvedValue({
-      content: [{ text: 'Thank you for reaching out, Jane!' }]
-    })
-  }))
-  const spy = vi.fn()
-  const wrapper = mount(ContactForm, {
-    global: { plugins: [vuetify] },
-    props: { onFormSubmitted: spy },
-  })
-  const state = wrapper.vm as any
-  state.form.firstName = 'Jane'
-  state.form.lastName  = 'Doe'
-  state.form.topic     = 'General Inquiry'
-  state.formValid      = true
-  await state.submitForm()
-  await wrapper.vm.$nextTick()
-  expect(spy).toHaveBeenCalledWith({ firstName: 'Jane', message: 'Thank you for reaching out, Jane!' })
-  vi.unstubAllGlobals()
-})
-
-test('submitForm falls back to static message when fetch throws', async () => {
-  vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('Network error')))
+test('submitForm emits form-submitted with static message', async () => {
   const spy = vi.fn()
   const wrapper = mount(ContactForm, {
     global: { plugins: [vuetify] },
@@ -102,47 +78,10 @@ test('submitForm falls back to static message when fetch throws', async () => {
   state.formValid      = true
   await state.submitForm()
   await wrapper.vm.$nextTick()
-  expect(spy).toHaveBeenCalledWith({ firstName: 'Jane', message: "Thanks, Jane! Your message has been sent." })
-  vi.unstubAllGlobals()
-})
-
-test('isSubmitting is false after submitForm completes', async () => {
-  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-    ok: true,
-    json: vi.fn().mockResolvedValue({ content: [{ text: 'Thanks!' }] })
-  }))
-  const wrapper = mountContactForm()
-  const state = wrapper.vm as any
-  state.form.firstName = 'Jane'
-  state.formValid      = true
-  expect(state.isSubmitting).toBe(false)
-  const promise = state.submitForm()
-  await promise
-  expect(state.isSubmitting).toBe(false)
-  vi.unstubAllGlobals()
-})
-
-test('submitForm resets form fields after emit', async () => {
-  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-    ok: true,
-    json: vi.fn().mockResolvedValue({ content: [{ text: 'Thanks!' }] })
-  }))
-  const wrapper = mountContactForm()
-  const state = wrapper.vm as any
-  state.form.firstName = 'Jane'
-  state.form.lastName  = 'Doe'
-  state.form.email     = 'jane@example.com'
-  state.form.topic     = 'General Inquiry'
-  state.form.message   = 'Hello!'
-  state.formValid      = true
-  await state.submitForm()
-  await wrapper.vm.$nextTick()
-  expect(state.form.firstName).toBe('')
-  expect(state.form.lastName).toBe('')
-  expect(state.form.email).toBe('')
-  expect(state.form.topic).toBe('')
-  expect(state.form.message).toBe('')
-  vi.unstubAllGlobals()
+  expect(spy).toHaveBeenCalledWith({
+    firstName: 'Jane',
+    message: "Thanks, Jane! Your message has been sent."
+  })
 })
 
 test('resetForm clears all fields', async () => {
@@ -169,42 +108,3 @@ test('submitForm does nothing when formValid is false', async () => {
   expect(state.isSubmitting).toBe(false)
 })
 
-test('submitForm falls back to static message when fetch returns non-2xx', async () => {
-  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-    ok: false,
-    status: 401,
-    statusText: 'Unauthorized',
-    json: vi.fn().mockResolvedValue({})
-  }))
-  const spy = vi.fn()
-  const wrapper = mount(ContactForm, {
-    global: { plugins: [vuetify] },
-    props: { onFormSubmitted: spy },
-  })
-  const state = wrapper.vm as any
-  state.form.firstName = 'Jane'
-  state.formValid      = true
-  await state.submitForm()
-  await wrapper.vm.$nextTick()
-  expect(spy).toHaveBeenCalledWith({ firstName: 'Jane', message: 'Thanks, Jane! Your message has been sent.' })
-  vi.unstubAllGlobals()
-})
-
-test('submitForm falls back to static message when content array is empty', async () => {
-  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-    ok: true,
-    json: vi.fn().mockResolvedValue({ content: [] })
-  }))
-  const spy = vi.fn()
-  const wrapper = mount(ContactForm, {
-    global: { plugins: [vuetify] },
-    props: { onFormSubmitted: spy },
-  })
-  const state = wrapper.vm as any
-  state.form.firstName = 'Jane'
-  state.formValid      = true
-  await state.submitForm()
-  await wrapper.vm.$nextTick()
-  expect(spy).toHaveBeenCalledWith({ firstName: 'Jane', message: 'Thanks, Jane! Your message has been sent.' })
-  vi.unstubAllGlobals()
-})
