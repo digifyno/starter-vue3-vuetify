@@ -154,6 +154,7 @@ async function submitForm(): Promise<void> {
         }]
       })
     })
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
     const data = await response.json()
     const ackMessage = data?.content?.[0]?.text ?? `Thanks, ${form.firstName}! Your message has been sent.`
     emit('form-submitted', { firstName: form.firstName, message: ackMessage })

@@ -69,6 +69,7 @@ test('validEmail fails for invalid email', () => {
 
 test('submitForm emits form-submitted with AI-generated message on success', async () => {
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+    ok: true,
     json: vi.fn().mockResolvedValue({
       content: [{ text: 'Thank you for reaching out, Jane!' }]
     })
@@ -107,6 +108,7 @@ test('submitForm falls back to static message when fetch throws', async () => {
 
 test('isSubmitting is false after submitForm completes', async () => {
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+    ok: true,
     json: vi.fn().mockResolvedValue({ content: [{ text: 'Thanks!' }] })
   }))
   const wrapper = mountContactForm()
@@ -122,6 +124,7 @@ test('isSubmitting is false after submitForm completes', async () => {
 
 test('submitForm resets form fields after emit', async () => {
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+    ok: true,
     json: vi.fn().mockResolvedValue({ content: [{ text: 'Thanks!' }] })
   }))
   const wrapper = mountContactForm()
@@ -166,8 +169,30 @@ test('submitForm does nothing when formValid is false', async () => {
   expect(state.isSubmitting).toBe(false)
 })
 
+test('submitForm falls back to static message when fetch returns non-2xx', async () => {
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+    ok: false,
+    status: 401,
+    statusText: 'Unauthorized',
+    json: vi.fn().mockResolvedValue({})
+  }))
+  const spy = vi.fn()
+  const wrapper = mount(ContactForm, {
+    global: { plugins: [vuetify] },
+    props: { onFormSubmitted: spy },
+  })
+  const state = wrapper.vm as any
+  state.form.firstName = 'Jane'
+  state.formValid      = true
+  await state.submitForm()
+  await wrapper.vm.$nextTick()
+  expect(spy).toHaveBeenCalledWith({ firstName: 'Jane', message: 'Thanks, Jane! Your message has been sent.' })
+  vi.unstubAllGlobals()
+})
+
 test('submitForm falls back to static message when content array is empty', async () => {
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+    ok: true,
     json: vi.fn().mockResolvedValue({ content: [] })
   }))
   const spy = vi.fn()
