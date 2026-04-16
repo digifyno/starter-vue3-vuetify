@@ -394,10 +394,14 @@ test('theme toggle button has aria-label', () => {
 test('toggleTheme switches theme', async () => {
   const wrapper = mountApp()
   const state = wrapper.vm as any
-  const initialDark = state.isDark
+  // light → dark (false branch)
   state.toggleTheme()
   await wrapper.vm.$nextTick()
-  expect(state.isDark).toBe(!initialDark)
+  expect(state.isDark).toBe(true)
+  // dark → light (true branch)
+  state.toggleTheme()
+  await wrapper.vm.$nextTick()
+  expect(state.isDark).toBe(false)
 })
 
 test('v-snackbar update:modelValue updates snackbarVisible', async () => {
