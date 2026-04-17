@@ -41,37 +41,6 @@ test('index.html contains CSP meta tag', () => {
   expect(html).toContain('data:')
 })
 
-describe('required rule', () => {
-  const required = (v: string): true | string => !!v?.trim() || 'This field is required'
-
-  it('passes for non-empty string', () => {
-    expect(required('hello')).toBe(true)
-  })
-  it('fails for empty string', () => {
-    expect(required('')).toBe('This field is required')
-  })
-  it('fails for whitespace-only string', () => {
-    expect(required('   ')).toBe('This field is required')
-  })
-})
-
-describe('validEmail rule', () => {
-  const validEmail = (v: string): true | string =>
-    /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v) || 'Enter a valid email address'
-
-  it('accepts valid email', () => {
-    expect(validEmail('user@example.com')).toBe(true)
-  })
-  it('rejects missing dot in domain', () => {
-    expect(validEmail('user@examplecom')).not.toBe(true)
-  })
-  it('rejects any-char-as-dot', () => {
-    expect(validEmail('a@bXc')).not.toBe(true)
-  })
-  it('rejects double-at address', () => {
-    expect(validEmail('a@@b.c')).not.toBe(true)
-  })
-})
 
 test('renders Component Examples section', () => {
   const wrapper = mountApp()
