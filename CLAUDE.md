@@ -60,11 +60,20 @@ vite.config.ts       # Vite build + Vitest test configuration
 tsconfig.json        # TypeScript compiler config (excludes test files)
 tsconfig.node.json   # TypeScript config for Vite/Node tooling
 src/
-├── App.vue          # Root component
-├── App.test.ts      # Vitest tests for App component
-├── main.ts          # Entry point (Vuetify plugin setup)
-├── test-setup.ts    # Vitest global setup (ResizeObserver polyfill)
-└── vite-env.d.ts    # TypeScript declarations
+├── App.vue              # Root component
+├── App.test.ts          # Vitest tests for App component
+├── main.ts              # Entry point (Vuetify plugin setup)
+├── test-setup.ts        # Vitest global setup (ResizeObserver polyfill)
+├── vite-env.d.ts        # TypeScript declarations
+└── components/
+    ├── AlertsPanel.vue       # Alert types and snackbar trigger examples
+    ├── AlertsPanel.test.ts
+    ├── CardGrid.vue          # Feature card grid example
+    ├── CardGrid.test.ts
+    ├── ContactForm.vue       # Contact form with validation
+    ├── ContactForm.test.ts
+    ├── HeroCard.vue          # Hero/landing card
+    └── HeroCard.test.ts
 public/
 ├── favicon.svg      # Static favicon (served directly by the web server)
 ├── robots.txt       # Search engine crawl rules
