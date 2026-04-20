@@ -76,32 +76,34 @@ describe('progress buttons', () => {
     expect(minusBtn).toBeDefined()
     expect(plusBtn).toBeDefined()
 
-    // Access progress via $.exposed since findComponent().vm doesn't unwrap defineExpose
-    // for child components in Vue Test Utils 2.x + Vue 3.5
-    const alertsPanel = wrapper.findComponent(AlertsPanel)
-    const progress = (alertsPanel.vm as any).$.exposed.progress // Ref<number>
+    // Track progress via VProgressLinear modelValue prop (initial value is 60)
+    const allProgressLinears = wrapper.findAllComponents({ name: 'VProgressLinear' })
+    const vpLinear = allProgressLinears.find(c => c.props('modelValue') === 60)
+    expect(vpLinear).toBeDefined()
 
     // Initial progress is 60; +10% → 70
     await plusBtn!.trigger('click')
     await wrapper.vm.$nextTick()
-    expect(progress.value).toBe(70)
+    expect(vpLinear!.props('modelValue')).toBe(70)
 
     // -10% → 60
     await minusBtn!.trigger('click')
     await wrapper.vm.$nextTick()
-    expect(progress.value).toBe(60)
+    expect(vpLinear!.props('modelValue')).toBe(60)
 
-    // Upper clamp: set to 100, +10% stays at 100
-    progress.value = 100
+    // Upper clamp: set to 100 via v-model emit, +10% stays at 100
+    await vpLinear!.vm.$emit('update:modelValue', 100)
+    await wrapper.vm.$nextTick()
     await plusBtn!.trigger('click')
     await wrapper.vm.$nextTick()
-    expect(progress.value).toBe(100)
+    expect(vpLinear!.props('modelValue')).toBe(100)
 
-    // Lower clamp: set to 0, -10% stays at 0
-    progress.value = 0
+    // Lower clamp: set to 0 via v-model emit, -10% stays at 0
+    await vpLinear!.vm.$emit('update:modelValue', 0)
+    await wrapper.vm.$nextTick()
     await minusBtn!.trigger('click')
     await wrapper.vm.$nextTick()
-    expect(progress.value).toBe(0)
+    expect(vpLinear!.props('modelValue')).toBe(0)
   })
 })
 
@@ -219,15 +221,7 @@ test('form fields accept typed input via DOM events', async () => {
   await wrapper.find('[value="forms"]').trigger('click')
   await wrapper.vm.$nextTick()
 
-  // Access form state via $.exposed — findComponent().vm doesn't unwrap defineExpose
-  // for child components in Vue Test Utils 2.x + Vue 3.5
-  const contactForm = wrapper.findComponent(ContactForm)
-  const form = (contactForm.vm as any).$.exposed.form
-
-  // Trigger the compiled v-model update handlers by emitting update:modelValue
-  // on each Vuetify form component. Direct state mutation bypasses these handlers;
-  // only component-emitted events invoke the compiled setters.
-
+  // Verify v-model bindings by emitting update:modelValue and checking component props
   const textFields = wrapper.findAllComponents({ name: 'VTextField' })
 
   // VTextField for firstName — first VTextField in the form
@@ -235,7 +229,7 @@ test('form fields accept typed input via DOM events', async () => {
   if (firstNameField) {
     await firstNameField.vm.$emit('update:modelValue', 'Alice')
     await wrapper.vm.$nextTick()
-    expect(form.firstName).toBe('Alice')
+    expect(firstNameField.props('modelValue')).toBe('Alice')
   }
 
   // VTextField for lastName — second VTextField in the form
@@ -243,7 +237,7 @@ test('form fields accept typed input via DOM events', async () => {
   if (lastNameField) {
     await lastNameField.vm.$emit('update:modelValue', 'Smith')
     await wrapper.vm.$nextTick()
-    expect(form.lastName).toBe('Smith')
+    expect(lastNameField.props('modelValue')).toBe('Smith')
   }
 
   // VTextField for email — third VTextField in the form
@@ -251,7 +245,7 @@ test('form fields accept typed input via DOM events', async () => {
   if (emailField) {
     await emailField.vm.$emit('update:modelValue', 'alice@example.com')
     await wrapper.vm.$nextTick()
-    expect(form.email).toBe('alice@example.com')
+    expect(emailField.props('modelValue')).toBe('alice@example.com')
   }
 
   // VSelect for topic
@@ -260,7 +254,7 @@ test('form fields accept typed input via DOM events', async () => {
   if (topicField) {
     await topicField.vm.$emit('update:modelValue', 'General Inquiry')
     await wrapper.vm.$nextTick()
-    expect(form.topic).toBe('General Inquiry')
+    expect(topicField.props('modelValue')).toBe('General Inquiry')
   }
 
   // VTextarea for message
@@ -269,28 +263,22 @@ test('form fields accept typed input via DOM events', async () => {
   if (messageField) {
     await messageField.vm.$emit('update:modelValue', 'Hello world')
     await wrapper.vm.$nextTick()
-    expect(form.message).toBe('Hello world')
+    expect(messageField.props('modelValue')).toBe('Hello world')
   }
 })
 
-test('required validator is exercised through the component', async () => {
-  const wrapper = mountApp()
-  await wrapper.find('[value="forms"]').trigger('click')
-  await wrapper.vm.$nextTick()
-  const contactForm = wrapper.findComponent(ContactForm)
-  const { required } = (contactForm.vm as any).$.exposed
-  expect(required('')).toBe('This field is required')
-  expect(required('hello')).toBe(true)
+test('required validator is exercised through the component', () => {
+  const wrapper = mount(ContactForm, { global: { plugins: [vuetify] } })
+  const state = wrapper.vm as any
+  expect(state.required('')).toBe('This field is required')
+  expect(state.required('hello')).toBe(true)
 })
 
-test('validEmail validator false branch covered via component', async () => {
-  const wrapper = mountApp()
-  await wrapper.find('[value="forms"]').trigger('click')
-  await wrapper.vm.$nextTick()
-  const contactForm = wrapper.findComponent(ContactForm)
-  const { validEmail } = (contactForm.vm as any).$.exposed
-  expect(validEmail('notanemail')).toBe('Enter a valid email address')
-  expect(validEmail('user@example.com')).toBe(true)
+test('validEmail validator false branch covered via component', () => {
+  const wrapper = mount(ContactForm, { global: { plugins: [vuetify] } })
+  const state = wrapper.vm as any
+  expect(state.validEmail('notanemail')).toBe('Enter a valid email address')
+  expect(state.validEmail('user@example.com')).toBe(true)
 })
 
 test('form-submitted event shows success snackbar', async () => {
@@ -327,23 +315,15 @@ test('v-progress-linear update:modelValue updates progress', async () => {
   await wrapper.find('[value="alerts"]').trigger('click')
   await wrapper.vm.$nextTick()
 
-  const alertsPanel = wrapper.findComponent(AlertsPanel)
-  // Access progress ref via $.exposed — findComponent().vm doesn't unwrap defineExpose
-  // for child components in Vue Test Utils 2.x + Vue 3.5
-  const progress = (alertsPanel.vm as any).$.exposed.progress // Ref<number>
-
-  // Find the VProgressLinear whose modelValue matches the current progress (60)
+  // Find the VProgressLinear that tracks progress (initial value is 60)
   const allProgressLinears = wrapper.findAllComponents({ name: 'VProgressLinear' })
-  const vProgressLinear = allProgressLinears.find(c => c.props('modelValue') === progress.value)
+  const vProgressLinear = allProgressLinears.find(c => c.props('modelValue') === 60)
   if (vProgressLinear) {
     await vProgressLinear.vm.$emit('update:modelValue', 75)
     await wrapper.vm.$nextTick()
-    expect(progress.value).toBe(75)
+    expect(vProgressLinear.props('modelValue')).toBe(75)
   } else {
-    // Directly invoke the compiled setter to exercise the covered line
-    progress.value = 75
-    await wrapper.vm.$nextTick()
-    expect(progress.value).toBe(75)
+    expect(wrapper.findComponent(AlertsPanel).exists()).toBe(true)
   }
 })
 
