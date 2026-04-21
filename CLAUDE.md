@@ -109,59 +109,12 @@ Edit `src/main.ts` to configure themes, colors, and defaults.
 
 ### Testing Patterns
 
-- Test files (`*.test.ts`, `src/test-setup.ts`) are excluded from `vue-tsc` type checking in `tsconfig.json`. This is intentional: Vitest 4 no longer transitively provides `@types/node`, so Node built-ins in test helpers would fail production type checking. Use `npm run test` to catch test-specific type errors.
-- Vitest globals (`test`, `describe`, `expect`, `it`, `beforeEach`, etc.) are available in all test files without explicit imports — configured via `globals: true` in `vite.config.ts` and `"types": ["vitest/globals"]` in `tsconfig.json`.
-- `@typescript-eslint/no-explicit-any` is disabled for `*.test.ts` and `*.spec.ts` files in `eslint.config.js`. This is intentional: the `wrapper.vm as any` pattern is the documented way to access exposed component state in tests, and the override keeps the lint rule active for all production code.
-- To access component state in tests, use `defineExpose()` in `<script setup>` to explicitly expose the refs, reactive objects, and functions you need. Then read them via `wrapper.vm as any` in tests. Do **not** use `(wrapper.vm as any).$.setupState` or `(wrapper.vm as any).$.exposed` — both are private Vue internals and will break across Vue versions:
-  ```ts
-  // App.vue
-  defineExpose({ count, reset })
-
-  // App.test.ts
-  const state = wrapper.vm as any
-  expect(state.count).toBe(0)
-  state.count = 5          // mutate reactive state directly
-  state.reset()            // call exposed functions
-  ```
-  For child components, the same pattern applies — expose what you need via `defineExpose()` on the child, then access via `(childWrapper.vm as any).propertyName`:
-  ```ts
-  // ChildComponent.vue
-  defineExpose({ progress })
-
-  // Parent.test.ts
-  const child = wrapper.findComponent(ChildComponent)
-  const childState = child.vm as any
-  expect(childState.progress).toBe(60)
-  ```
-- Components inside inactive `v-tabs` panels are lazily rendered. `findComponent()` may return nothing for non-active tabs. Instead, assert that the tab element itself exists rather than querying into the inactive panel:
-  ```ts
-  // Verify the tab is present without activating it
-  expect(wrapper.find('[value="forms"]').exists()).toBe(true)
-  ```
-- Vuetify teleports snackbar content (including action buttons) outside the component wrapper in JSDOM. Use a three-tier fallback to locate and click the dismiss button:
-  ```ts
-  // 1. Try DOM buttons filtered by visible text
-  const allBtns = wrapper.findAll('button')
-  const dismissBtn = allBtns.find(b => b.text().includes('Dismiss'))
-  if (dismissBtn) {
-    await dismissBtn.trigger('click')
-    await wrapper.vm.$nextTick()
-    expect(state.snackbarVisible).toBe(false)
-  } else {
-    // 2. Teleported outside wrapper — find VBtn in snackbar component subtree
-    const dismissVBtn = snackbar.findComponent({ name: 'VBtn' })
-    if (dismissVBtn.exists()) {
-      await dismissVBtn.trigger('click')
-      await wrapper.vm.$nextTick()
-      expect(state.snackbarVisible).toBe(false)
-    } else {
-      // 3. Last resort: exercise the code path directly via state mutation
-      state.snackbarVisible = false
-      await wrapper.vm.$nextTick()
-      expect(snackbar.props('modelValue')).toBe(false)
-    }
-  }
-  ```
+- Test files (`*.test.ts`, `src/test-setup.ts`) are excluded from `vue-tsc` — Vitest 4 no longer provides `@types/node` transitively. Run `npm run test` to catch test-specific type errors.
+- Vitest globals (`test`, `describe`, `expect`, `it`, `beforeEach`, etc.) are available in all test files without explicit imports — configured via `globals: true` in `vite.config.ts`.
+- `@typescript-eslint/no-explicit-any` is disabled for test files — `wrapper.vm as any` is the documented way to access exposed component state.
+- To access component state in tests, use `defineExpose()` to expose refs/functions, then read via `wrapper.vm as any`. Do **not** use `(wrapper.vm as any).$.setupState` or `(wrapper.vm as any).$.exposed` — private Vue internals that break across versions. Example: `defineExpose({ count, reset })`; access via `(wrapper.vm as any).count`. Same applies to child components via `childWrapper.vm as any`.
+- Components inside inactive `v-tabs` panels are lazily rendered — `findComponent()` may return nothing. Assert the tab element exists instead: `wrapper.find('[value="forms"]').exists()`.
+- Vuetify teleports snackbar content outside the component wrapper in JSDOM. Use `wrapper.findAll('button').find(b => b.text().includes('Dismiss'))` to locate the dismiss button; if not found, search the VSnackbar subtree via `snackbar.findComponent({ name: 'VBtn' })`; as a last resort, mutate state directly (`state.snackbarVisible = false`).
 
 ### Security Patterns
 - Place static assets (favicon, images) in `public/` so they are served correctly
