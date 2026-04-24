@@ -24,4 +24,5 @@ coverage
 *.sln
 *.sw?
 .claude/
+.claude-task-*/
 bootstrap.md
