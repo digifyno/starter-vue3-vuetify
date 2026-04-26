@@ -117,6 +117,7 @@ Edit `src/main.ts` to configure themes, colors, and defaults.
 - Vuetify teleports snackbar content outside the component wrapper in JSDOM. Use `wrapper.findAll('button').find(b => b.text().includes('Dismiss'))` to locate the dismiss button; if not found, search the VSnackbar subtree via `snackbar.findComponent({ name: 'VBtn' })`; as a last resort, mutate state directly (`state.snackbarVisible = false`).
 
 ### Security Patterns
+- Transitive dependency vulnerabilities are patched via the `overrides` field in `package.json` (e.g., `postcss` is pinned to `>=8.5.10` to fix CVE GHSA-qx2v-qp2m-jg93). Add new entries there when `npm audit` reports a fixable transitive CVE.
 - Place static assets (favicon, images) in `public/` so they are served correctly
 - All external links must include `rel="noopener noreferrer"` and `target="_blank"` to prevent tab-napping and information leakage:
   ```html
