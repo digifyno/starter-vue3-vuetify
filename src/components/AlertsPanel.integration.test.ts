@@ -121,11 +121,8 @@ test('v-progress-linear update:modelValue updates progress', async () => {
   // Find the VProgressLinear that tracks progress (initial value is 60)
   const allProgressLinears = wrapper.findAllComponents({ name: 'VProgressLinear' })
   const vProgressLinear = allProgressLinears.find(c => c.props('modelValue') === 60)
-  if (vProgressLinear) {
-    await vProgressLinear.vm.$emit('update:modelValue', 75)
-    await wrapper.vm.$nextTick()
-    expect(vProgressLinear.props('modelValue')).toBe(75)
-  } else {
-    expect(wrapper.findComponent(AlertsPanel).exists()).toBe(true)
-  }
+  expect(vProgressLinear, 'VProgressLinear must be present after activating alerts tab').toBeDefined()
+  await vProgressLinear!.vm.$emit('update:modelValue', 75)
+  await wrapper.vm.$nextTick()
+  expect(vProgressLinear!.props('modelValue')).toBe(75)
 })
