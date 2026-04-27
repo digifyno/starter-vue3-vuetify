@@ -82,6 +82,12 @@ test('submitForm emits form-submitted with static message', async () => {
     firstName: 'Jane',
     message: "Thanks, Jane! Your message has been sent."
   })
+  expect(state.form.firstName).toBe('')
+  expect(state.form.lastName).toBe('')
+  expect(state.form.email).toBe('')
+  expect(state.form.topic).toBe('')
+  expect(state.form.message).toBe('')
+  expect(state.isSubmitting).toBe(false)
 })
 
 test('resetForm clears all fields', async () => {
