@@ -1,3 +1,9 @@
+<!-- rsi-worker-metadata
+  workerId=bf6ce827-c6b2-475b-b0be-314839cb5f93
+  productId=e5868523-dc6f-4692-8c46-92b69d48e925
+  scopeConfigHash=456102368d5a61cd
+  generatedAt=2026-04-28T04:47:38.802Z
+-->
 # Vue 3 + Vuetify Starter - Claude Development Guide
 
 ## Stack
