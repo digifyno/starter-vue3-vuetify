@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { createVuetify } from 'vuetify'
 import App from '../App.vue'
-import AlertsPanel from './AlertsPanel.vue'
 
 const vuetify = createVuetify()
 
