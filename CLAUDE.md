@@ -66,13 +66,15 @@ src/
 ├── test-setup.ts        # Vitest global setup (ResizeObserver polyfill)
 ├── vite-env.d.ts        # TypeScript declarations
 └── components/
-    ├── AlertsPanel.vue       # Alert types and snackbar trigger examples
+    ├── AlertsPanel.vue                   # Alert types and snackbar trigger examples
     ├── AlertsPanel.test.ts
-    ├── CardGrid.vue          # Feature card grid example
+    ├── AlertsPanel.integration.test.ts
+    ├── CardGrid.vue                      # Feature card grid example
     ├── CardGrid.test.ts
-    ├── ContactForm.vue       # Contact form with validation
+    ├── ContactForm.vue                   # Contact form with validation
     ├── ContactForm.test.ts
-    ├── HeroCard.vue          # Hero/landing card
+    ├── ContactForm.integration.test.ts
+    ├── HeroCard.vue                      # Hero/landing card
     └── HeroCard.test.ts
 public/
 ├── favicon.svg      # Static favicon (served directly by the web server)
