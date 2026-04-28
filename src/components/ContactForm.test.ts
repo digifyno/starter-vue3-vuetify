@@ -67,6 +67,12 @@ test('validEmail fails for invalid email', () => {
   expect(state.validEmail('notanemail')).toBe('Enter a valid email address')
 })
 
+test('validEmail fails for empty string', () => {
+  const wrapper = mountContactForm()
+  const state = wrapper.vm as any
+  expect(state.validEmail('')).toBe('Enter a valid email address')
+})
+
 test('submitForm emits form-submitted with static message', async () => {
   const spy = vi.fn()
   const wrapper = mount(ContactForm, {
